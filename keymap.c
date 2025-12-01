@@ -1,6 +1,11 @@
 #include QMK_KEYBOARD_H
 #include "../../../lib/rdr_lib/rdr_common.h"
 
+enum User_Keycodes {
+    U_NRGB = CHOSFOX_USER_DEFINE_KEY,
+    U_PRGB
+};
+
 /*
                               Layout Helper
 
@@ -22,28 +27,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                  KC_Q,    KC_W,      KC_E,     KC_R,       KC_T,      KC_Y,     KC_U,    KC_I,    KC_O,     KC_P,     KC_BSPC,
         KC_ESC,  KC_A,    KC_S,      KC_D,     KC_F,       KC_G,      KC_H,     KC_J,    KC_K,    KC_L,     KC_SCLN,  KC_ENT,
         KC_LSFT, KC_Z,    KC_X,      KC_C,     KC_V,       KC_B,      KC_N,     KC_M,    KC_COMM, KC_DOT,   KC_SLSH,  KC_QUOT,
-        MO(3),   KC_LCTL, KC_LGUI,   KC_LALT,  MO(1),           KC_SPC,         MO(1),   KC_LEFT, KC_DOWN,  KC_UP,    KC_RGHT
+        MO(3),   KC_LCTL, KC_LGUI,   KC_LALT,  MO(1),       LSFT_T(KC_SPC),     MO(1),   KC_LEFT, KC_DOWN,  KC_UP,    KC_RGHT
     ),
     // programming layer
     [1] = LAYOUT_tkl_ansi(
         _______, KC_TILD, KC_AT,     KC_PERC,  KC_CIRC,    KC_AMPR,   KC_PAST,  _______, KC_LCBR, KC_RCBR,  _______,  _______,
         _______, KC_EXLM, KC_UNDS,   KC_DLR,   KC_MINUS,   KC_PLUS,   KC_PIPE,  KC_EQUAL,KC_LPRN, KC_RPRN,  _______,  _______,
         _______, _______, _______,   _______,  _______,    _______,   _______,  _______, KC_LBRC, KC_RBRC,  _______,  _______,
-        _______, _______, _______,   _______,  _______,           KC_SPC,       _______,   _______, _______,  _______,  _______
+        _______, _______, _______,   _______,  _______,          _______,       _______, _______, _______,  _______,  _______
     ),
     // number layer
     [2] = LAYOUT_tkl_ansi(
         _______, KC_1,    KC_2,      KC_3,     KC_4,       KC_5,      KC_6,     KC_7,    KC_8,    KC_9,     KC_0,     _______,
-        _______, _______, _______,   _______,  _______,    _______,   _______,  _______, _______, _______,  _______,  _______,
-        _______, _______, _______,   _______,  _______,    _______,   _______,  _______, _______, _______,  _______,  _______,
-        MO(3),   _______, _______,   _______,  _______,           KC_SPC,       _______,   _______, _______,  _______,  _______
+        _______, KC_F1,   KC_F2,     KC_F3,    KC_F4,      KC_F5,     KC_F6,    KC_F7,   KC_F8,   KC_F9,    KC_F10,   _______,
+        _______, KC_F11,  KC_F12,    _______,  _______,    _______,   _______,  _______, _______, _______,  _______,  _______,
+        MO(3),   _______, _______,   _______,  _______,          _______,       _______, _______, _______,  _______,  _______
     ),
     // system layer
     [3] = LAYOUT_tkl_ansi(
-        MD_USB,  MD_BLE1, MD_BLE2,   MD_BLE3,  MD_24G,     KC_NO,     KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,    RGB_RTOG,
+        MD_USB,  MD_BLE1, MD_BLE2,   MD_BLE3,  MD_24G,     KC_NO,     KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,    QK_BOOT,
         KC_NO,   KC_NO,   KC_NO,     KC_NO,    KC_NO,      KC_NO,     KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,    KC_NO,
         KC_NO,   KC_NO,   KC_NO,     KC_NO,    KC_NO,      KC_NO,     KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,    KC_NO,
-        KC_NO,   KC_NO,   KC_NO,     KC_NO,    KC_NO,           U_EE_CLR,       KC_NO,   KC_NO,   KC_NO,    KC_NO,    KC_NO
+        KC_NO,   KC_NO,   KC_NO,     KC_NO,    KC_NO,           U_EE_CLR,       KC_NO,   U_PRGB,  RGB_RTOG, RGB_RTOG, U_NRGB
     )
 };
 
@@ -80,6 +85,26 @@ bool process_shift_backspace(uint16_t keycode, keyrecord_t *record) {
 }
 
 // ===============================
+// Toggle RGB Modes
+// ===============================
+
+bool process_toggle_rgb(uint16_t keycode) {
+    static uint32_t current_mode = 0;
+
+    if (keycode == U_NRGB) {
+        current_mode = (current_mode + 11 + 1) % 11;
+    } else if (keycode == U_PRGB) {
+        current_mode = (current_mode + 11 - 1) % 11;
+    } else {
+        return true;
+    }
+
+    rgblight_mode(current_mode);
+
+    return false;
+}
+
+// ===============================
 // QMK HOOKS
 // ===============================
 
@@ -88,11 +113,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     if (!process_shift_backspace(keycode, record)) return false;
     if (!record->event.pressed) return true; // the following processors assume keydown
+    if (!process_toggle_rgb(keycode)) return false;
 
     return true;
 }
 
-void keyboard_post_init_user(void) {
-    rgblight_disable();
-}
+
+void keyboard_post_init_user() {}
 
