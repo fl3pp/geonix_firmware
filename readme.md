@@ -6,6 +6,8 @@ This repository contains the code for my custom firmware for the [Chosfox X Masr
 
 Download and extract the [Chosfox distribution](https://drive.google.com/drive/folders/1QNRFeJZBt527T0AZcOdAccgRrbsD4zqa) of the QMK source code, not in the official repository but through Google Drive.
 
+However, note that some functionality doesn't work in this version, including e.g. `_user` functions which this keymaps makes use of. You'll have to fix this on your own if you want to use all features of this repo.
+
 Then, install the `qmk` cli tool, navigate to the directory and setup it up using:
 
 ```
