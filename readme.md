@@ -2,9 +2,9 @@
 
 This repository contains the code for my custom firmware for the [Chosfox X Masro | Geonix Rev.2](https://chosfox.com/collections/40-keyboard/products/chosfox-x-masro-geonix-rev-2).
 
-## Setup
+## Compiling
 
-Download and extract the [Chosfix distribution](https://drive.google.com/drive/folders/1QNRFeJZBt527T0AZcOdAccgRrbsD4zqa) of the QMK source code, not in the official repository but through Google Drive.
+Download and extract the [Chosfox distribution](https://drive.google.com/drive/folders/1QNRFeJZBt527T0AZcOdAccgRrbsD4zqa) of the QMK source code, not in the official repository but through Google Drive.
 
 Then, install the `qmk` cli tool, navigate to the directory and setup it up using:
 
@@ -30,5 +30,15 @@ You should then be able to compile the firmware (in 12 threads):
 
 ```
 qmk compile -j 12
+```
+
+## Flashing
+
+Using Windows, it should be possible to use the built-in flasher of the [QMK Toolbox](https://qmk.fm/toolbox) tooling to flash the keympap.
+
+On Mac, there seems to be a driver issue (at least on my device). But it should be possible to manually copy a new version of the firmware over using the `cp` command directly (in this case, the mounted drive was called `/Volumes/NO NAME`)
+
+```
+cd "/Volumes/NO NAME" && cp ~/src/qmk/Chosfox_Genoix/geonix40_geonix40_fl3pp.bin FLASH.BIN
 ```
 
