@@ -1,3 +1,4 @@
 VIA_ENABLE = yes
 EEPROM_DRIVER = custom
+UNICODE_COMMON = yes
 UNICODE_ENABLE = yes

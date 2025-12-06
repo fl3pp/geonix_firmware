@@ -12,7 +12,8 @@ enum User_Layers {
 enum User_Keycodes {
     U_MAC  /* switch to mac */ = CHOSFOX_USER_DEFINE_KEY + 1,
     U_WIN, // switch to win
-    U_DIAR // Diaresis
+    U_DIAR,// Diaresis
+    U_MU   // Greek Mu
 };
 
 enum HomeRowModKeyCodes {
@@ -55,15 +56,15 @@ enum Unicode_Characters {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LDEF] = LAYOUT_tkl_ansi(
         LT(LNUM, KC_TAB),
-                 KC_Q,    KC_W,      KC_E,     KC_R,       KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,      KC_BSPC,
+                 KC_Q,    KC_W,      KC_E,     KC_R,       KC_T,      KC_Z,     KC_U,     KC_I,     KC_O,     KC_P,      KC_BSPC,
         KC_ESC,  HMKC_A,  HMKC_S,    HMKC_D,   HMKC_F,     KC_G,      KC_H,     HMKC_J,   HMKC_K,   HMKC_L,   HMKC_SCLN, KC_ENT,
-        KC_LSFT, KC_Z,    KC_X,      KC_C,     KC_V,       KC_B,      KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,   KC_QUOT,
+        KC_LSFT, KC_Y,    KC_X,      KC_C,     KC_V,       KC_B,      KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,   KC_QUOT,
         MO(LFUN),KC_LCTL, KC_LGUI,   KC_LALT,  MO(LDEV),   LT(LNAV, KC_SPC),    MO(LDEV), KC_LEFT,  KC_DOWN,  KC_UP,     KC_RGHT
     ),
     [LDEV] = LAYOUT_tkl_ansi(
         KC_GRAVE,KC_TILD, KC_AT,     KC_PERC,  KC_CIRC,    KC_AMPR,   KC_PAST,  U_DIAR,   KC_LCBR,  KC_RCBR,  _______,   _______,
         _______, KC_EXLM, KC_UNDS,   KC_DLR,   KC_MINUS,   KC_PLUS,   KC_PIPE,  KC_EQUAL, KC_LPRN,  KC_RPRN,  _______,   _______,
-        _______, _______, _______,   _______,  _______,    _______,   _______,  _______,  KC_LBRC,  KC_RBRC,  _______,   _______,
+        _______, _______, _______,   _______,  _______,    _______,   _______,  U_MU,     KC_LBRC,  KC_RBRC,  _______,   _______,
         _______, _______, _______,   _______,  _______,          _______,       _______,  _______,  _______,  _______,   _______
     ),
     [LNUM] = LAYOUT_tkl_ansi(
@@ -147,6 +148,27 @@ bool process_diaeresis(uint16_t keycode, bool shift) {
 }
 
 // ===============================
+// Custom Letters
+// ===============================
+
+// Custom Letters, such as Greek ones, which upper and lower casing
+bool process_custom_letters(uint16_t keycode, bool shift) {
+    if (keycode == U_MU) {
+        if (is_mac) {
+            register_mods(MOD_MASK_ALT);
+            tap_code(KC_M);
+            unregister_mods(MOD_MASK_ALT);
+        } else {
+            if (shift) register_unicode(UC_MU);
+            else register_unicode(UC_mu);
+        }
+        return false;
+    }
+
+    return true;
+}
+
+// ===============================
 // shift backspace to delete
 // ===============================
 
@@ -182,12 +204,13 @@ bool process_shift_backspace(uint16_t keycode, keyrecord_t *record) {
 // ===============================
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // const bool shift = (get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT;
+    const bool shift = (get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT;
 
-    if (!process_diaeresis(keycode, record)) return false;
     if (!process_shift_backspace(keycode, record)) return false;
     if (!record->event.pressed) return true; // the following processors assume keydown
     if (!process_mac_win_switch(keycode, record)) return false;
+    if (!process_custom_letters(keycode, shift)) return false;
+    if (!process_diaeresis(keycode, shift)) return false;
 
     return true;
 }
@@ -196,6 +219,7 @@ bool rgb_matrix_indicators_user(void) {
     // light m or n, depending on Mac or Windows mode
     if (is_mac) { rgb_matrix_set_color(31, 255, 255, 255); }
     else { rgb_matrix_set_color(30, 255, 255, 255); }
+    return true;
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
