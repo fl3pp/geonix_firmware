@@ -1,21 +1,8 @@
-/* Copyright 2021 QMK
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #pragma once
 
+// ================== PREDEFINED SETTINGS
+
+#define DYNAMIC_KEYMAP_LAYER_COUNT 5
 #define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  1151
 #define EEPROM_SIZE 1152
 
@@ -31,3 +18,22 @@
 
 #define TRANSIENT_EEPROM_SIZE 4096
 
+// ================== CUSTOM SETTINGS
+
+// HOME ROW MODS
+// tapping term in ms (how long until a tap becomes a hold)
+#define TAPPING_TERM 200
+// Prevent rollover (n down, o down, n up, o up) to trigger mods, if duration lower than tapping term
+// #define IGNORE_MOD_TAP_INTERRUPT -> no longer supported, should be default
+// Undercut tapping term (n down, o down, o up, n up)
+#define TAPPING_FORCE_HOLD
+// SEE: https://precondition.github.io/home-row-mods#using-home-row-mods-with-qmk
+
+#define RGB_MATRIX_DEFAULT_ON true
+#define RGB_MATRIX_DEFAULT_HUE 0
+#define RGB_MATRIX_DEFAULT_SAT 0
+#define RGB_MATRIX_DEFAULT_VAL 0
+
+// UNICODE
+#define UNICODE_SELECTED_MODES UNICODE_MODE_WINCOMPOSE
+#define UNICODE_KEY_WINC KC_F13
