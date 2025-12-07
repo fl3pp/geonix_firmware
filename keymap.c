@@ -64,7 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LDEV] = LAYOUT_tkl_ansi(
         KC_GRAVE,KC_TILD, KC_AT,     KC_PERC,  KC_CIRC,    KC_AMPR,   KC_PAST,  U_DIAR,   KC_LCBR,  KC_RCBR,  _______,   _______,
         _______, KC_EXLM, KC_UNDS,   KC_DLR,   KC_MINUS,   KC_PLUS,   KC_PIPE,  KC_EQUAL, KC_LPRN,  KC_RPRN,  _______,   _______,
-        _______, _______, _______,   _______,  _______,    _______,   _______,  U_MU,     KC_LBRC,  KC_RBRC,  _______,   _______,
+        _______, _______, _______,   KC_HASH,  _______,    KC_BSLS,   KC_SLASH, U_MU,     KC_LBRC,  KC_RBRC,  _______,   _______,
         _______, _______, _______,   _______,  _______,          _______,       _______,  _______,  _______,  _______,   _______
     ),
     [LNUM] = LAYOUT_tkl_ansi(
