@@ -49,7 +49,7 @@ enum Unicode_Characters {
 ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
 │ SHI │  Z  │  X  │  C  │  V  │  B  │  N  │  M  │ ,<  │ .>  │ /?  │ '"  │
 ├─────┼─────┼─────┼─────┼─────┼─────┴─────┼─────┼─────┼─────┼─────┼─────┤
-│ FN  │ DEL │ CTR │ ALT │ WIN │           │ WIN │ <l> │ <d> │ <u> │ <r> │
+│ CTR │ WIN │ FN  │ ALT │ -v  │           │ -v  │ <l> │ <d> │ <u> │ <r> │
 └─────┴─────┴─────┴─────┴─────┴───────────┴─────┴─────┴─────┴─────┴─────┘
 */
 
@@ -59,25 +59,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                  KC_Q,    KC_W,      KC_E,     KC_R,       KC_T,      KC_Z,     KC_U,     KC_I,     KC_O,     KC_P,      KC_BSPC,
         KC_ESC,  HMKC_A,  HMKC_S,    HMKC_D,   HMKC_F,     KC_G,      KC_H,     HMKC_J,   HMKC_K,   HMKC_L,   HMKC_SCLN, KC_ENT,
         KC_LSFT, KC_Y,    KC_X,      KC_C,     KC_V,       KC_B,      KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,   KC_QUOT,
-        MO(LFUN),KC_LCTL, KC_LGUI,   KC_LALT,  MO(LDEV),   LT(LNAV, KC_SPC),    MO(LDEV), KC_LEFT,  KC_DOWN,  KC_UP,     KC_RGHT
+        KC_LCTL, KC_LGUI, MO(LFUN),  KC_LALT,  MO(LDEV),   LT(LNAV, KC_SPC),    MO(LDEV), KC_LEFT,  KC_DOWN,  KC_UP,     KC_RGHT
     ),
     [LDEV] = LAYOUT_tkl_ansi(
         KC_GRAVE,KC_TILD, KC_AT,     KC_PERC,  KC_CIRC,    KC_AMPR,   KC_PAST,  U_DIAR,   KC_LCBR,  KC_RCBR,  _______,   _______,
         _______, KC_EXLM, KC_UNDS,   KC_DLR,   KC_MINUS,   KC_PLUS,   KC_PIPE,  KC_EQUAL, KC_LPRN,  KC_RPRN,  _______,   _______,
-        _______, _______, _______,   KC_HASH,  _______,    KC_BSLS,   KC_SLASH, U_MU,     KC_LBRC,  KC_RBRC,  _______,   _______,
+        _______, KC_BSLS, KC_SLASH,  KC_HASH,  _______,    _______,   _______,  U_MU,     KC_LBRC,  KC_RBRC,  _______,   _______,
         _______, _______, _______,   _______,  _______,          _______,       _______,  _______,  _______,  _______,   _______
     ),
     [LNUM] = LAYOUT_tkl_ansi(
         _______, KC_1,    KC_2,      KC_3,     KC_4,       KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,      _______,
         _______, KC_F1,   KC_F2,     KC_F3,    KC_F4,      KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,    _______,
         _______, KC_F11,  KC_F12,    _______,  _______,    _______,   _______,  _______,  _______,  _______,  _______,   _______,
-        MO(LFUN),_______, _______,   _______,  _______,          _______,       _______,  _______,  _______,  _______,   _______
+        _______, _______, MO(LFUN),  _______,  _______,          _______,       _______,  _______,  _______,  _______,   _______
     ),
     [LNAV] = LAYOUT_tkl_ansi(
-        KC_NO,   KC_NO,  KC_NO,      KC_NO,    KC_NO,      KC_NO,     KC_NO,    KC_HOME,  KC_NO,    KC_END,   KC_NO,     KC_NO,
-        KC_NO,   KC_NO,   KC_NO,     KC_NO,    KC_NO,      KC_NO,     KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  KC_NO,     KC_NO,
-        KC_NO,   KC_NO,   KC_NO,     KC_NO,    KC_NO,      KC_NO,     KC_NO,    KC_PGUP,  KC_NO,    KC_PGDN,  KC_NO,     KC_NO,
-        KC_NO,   KC_NO,   KC_NO,     KC_NO,    KC_NO,           KC_NO,          KC_NO,    KC_NO,    KC_NO,    KC_NO,     KC_NO
+        _______, KC_NO,   KC_NO,     KC_BSPC,  KC_DEL,     KC_NO,     KC_NO,    KC_HOME,  KC_NO,    KC_END,   KC_NO,     _______,
+        _______, KC_LGUI, KC_LALT,   KC_LCTL,  KC_LSFT,    KC_NO,     KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  KC_NO,     KC_NO,
+        _______, KC_NO,   KC_NO,     KC_NO,    KC_NO,      KC_NO,     KC_NO,    KC_PGUP,  KC_NO,    KC_PGDN,  KC_NO,     KC_NO,
+        _______, _______, _______,   _______,  _______,           KC_NO,        _______,  _______,  _______,  _______,   _______
     ),
     [LFUN] = LAYOUT_tkl_ansi(
         MD_USB,  MD_BLE1, MD_BLE2,   MD_BLE3,  MD_24G,     KC_NO,     KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,     QK_BOOT,
@@ -131,6 +131,7 @@ bool process_diaeresis(uint16_t keycode, bool shift) {
         return true;
     }
 
+    keycode = keycode & 0xFF; // remove modifiers from keycode
     if (keycode == KC_A || keycode == KC_O || keycode == KC_U) {
         if (keycode == KC_A && shift) register_unicode(UC_AE);
         if (keycode == KC_A && !shift) register_unicode(UC_ae);
