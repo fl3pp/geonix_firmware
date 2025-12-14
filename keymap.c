@@ -126,10 +126,10 @@ bool process_diaeresis(uint16_t keycode, bool shift) {
 
     if (!diaeresis) return true;
 
-    if (is_mac) {
-        diaeresis = false;
-        return true;
-    }
+    // leave diaresis mode either way
+    diaeresis = false;
+
+    if (is_mac) return true;
 
     keycode = keycode & 0xFF; // remove modifiers from keycode
     if (keycode == KC_A || keycode == KC_O || keycode == KC_U) {
@@ -139,10 +139,7 @@ bool process_diaeresis(uint16_t keycode, bool shift) {
         if (keycode == KC_U && !shift) register_unicode(UC_ue);
         if (keycode == KC_O && shift) register_unicode(UC_OE);
         if (keycode == KC_O && !shift) register_unicode(UC_oe);
-        diaeresis = false;
         return false;
-    } else if (!IS_MODIFIER_KEYCODE(keycode)) {
-        diaeresis = true;
     }
 
     return true;
@@ -206,6 +203,7 @@ bool process_shift_backspace(uint16_t keycode, keyrecord_t *record) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     const bool shift = (get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT;
+    Board_Wakeup_Init();
 
     if (!process_shift_backspace(keycode, record)) return false;
     if (!record->event.pressed) return true; // the following processors assume keydown

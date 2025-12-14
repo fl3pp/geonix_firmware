@@ -37,3 +37,5 @@
 // UNICODE
 #define UNICODE_SELECTED_MODES UNICODE_MODE_WINCOMPOSE
 #define UNICODE_KEY_WINC KC_F13
+#define TAP_CODE_DELAY 10 // too fast tap sequences can bring OS / KB key up / down out of sync
+
